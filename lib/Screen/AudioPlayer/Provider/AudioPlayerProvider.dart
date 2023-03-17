@@ -3,41 +3,74 @@ import 'package:flutter/material.dart';
 
 class AudioPlayerProvider extends ChangeNotifier {
   AssetsAudioPlayer? assetsAudioPlayer;
+  Duration TotalDuration = Duration.zero;
+  bool a = true;
   int i=0;
-  List AudioLsit = [
-    "Assets/Audio/sakti bhakti.mp3",
-    "Assets/Audio/man_mari_jaan.mp3",
-    "Assets/Audio/mc_stan.mp3",
-  ];
 
-  List Image1 = [
-    "Assets/Image/sakti bhakti.jpg",
-    "Assets/Image/man_meri_jaan.jpg",
-    "Assets/Image/mc_stan.jpg",
+
+
+  List<Audio> GodAudio = [
+    Audio("Assets/Audio/God/Hanuman chalisa.mp3"),
+    Audio("Assets/Audio/God/Majha Bappa .mp3"),
+    Audio("Assets/Audio/God/Kano Dwarika Vado.mp3"),
+  ];
+  List GodImage = [
+    "Assets/Image/God/Hanuman chalisa.png",
+    "Assets/Image/God/ganpati.jpeg",
+    "Assets/Image/God/Kano Dwarika Vado.jpg",
+  ];
+  List GodName = [
+    "Hanuman chalisa",
+    "Majha Bappa",
+    "Kano Dwarika Vado",
   ];
 
   void initAudio() {
     assetsAudioPlayer = AssetsAudioPlayer();
 
-    assetsAudioPlayer!.open(Audio(AudioLsit[2]),autoStart: false,showNotification: true);
+    assetsAudioPlayer!.open(
+      autoStart: false,
+      showNotification: true,
+      Playlist(
+        audios: GodAudio,
+      ),
+    );
+    totalDurationAudio();
   }
 
   Future<void> StartAudio() async {
     await assetsAudioPlayer!.play();
   }
 
-
   Future<void> StopAudio() async {
     await assetsAudioPlayer!.pause();
   }
 
-
-  void NextAudio() {
-    i++;
+  void changeIcon() {
+    a ? StartAudio() : StopAudio();
+    a = !a;
     notifyListeners();
   }
-  void BackAudio() {
-    i--;
+
+  Future<void> NextAudio() async {
+    await assetsAudioPlayer!.next();
+    notifyListeners();
+  }
+
+  Future<void> BackAudio() async {
+    await assetsAudioPlayer!.previous();
+    notifyListeners();
+  }
+
+  void totalDurationAudio() {
+    assetsAudioPlayer!.current.listen((event) {
+      TotalDuration = event!.audio.duration;
+      notifyListeners();
+    });
+  }
+
+  void changeScreen(int value){
+    i = value;
     notifyListeners();
   }
 }
